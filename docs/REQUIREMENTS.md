@@ -2,7 +2,7 @@
 
 The [official brief](https://ausindia-my.sharepoint.com/:w:/g/personal/gaurav_k_aereo_io/IQA-StSsm-LtRZ-g2y2_w7PpAQyEZxJY4tLIznWCOh9t2zs?e=50cxu9) is authoritative. [Normalized reading notes](OFFICIAL_ASSIGNMENT.md) record its four-page contents. The requirement column below uses short requirement labels/phrases from that reading, rather than treating the larger build prompt as the official assignment.
 
-**Verification evidence:** On 2026-10-11, the full suite passed **111 tests**, with **95.28% statement coverage**. Ruff, formatting and mypy passed; real Uvicorn HTTP tests passed for both samples. See [delivery report](DELIVERY_REPORT.md) for commands and environmental limits. “Verified” means the named tests ran successfully; it does not imply global geographic coverage or public deployment readiness.
+**Verification evidence:** On 2026-10-11, the integrity-follow-up suite passed **129 tests**, with **95.45% statement coverage**. Ruff, formatting and mypy passed; real Uvicorn HTTP tests passed for both samples. See [delivery report](DELIVERY_REPORT.md) for commands and environmental limits. “Verified” means the named tests ran successfully; it does not imply global geographic coverage or public deployment readiness.
 
 ## Official minimum requirements
 
@@ -42,6 +42,10 @@ These are user-requested robustness improvements or implementation policies. The
 | E10 | Stable UUIDs, structured errors, 201 upload and pagination | Implementation choices; documented API contract | `app/main.py`, `app/schemas.py`, `app/errors.py` | `tests/test_api.py::test_kml_contract`, `test_pagination_and_unknown_ids`, `test_openapi_and_health`, `test_wrong_request_fields` | Verified by full suite |
 | E11 | Reproducible dependencies, lint, CI and container setup | User request; reviewer setup | `pyproject.toml`, lockfile, CI, Docker and compose files | Installation, Ruff, full Pytest, container build/start when available | Native installation and hosted Linux CI passed, including Compose build, HTTP checks and restart persistence |
 | E12 | Interview preparation and adversarial review | User request | `docs/INTERVIEW_PREP.md`, delivery report | Review answers against code and actual test report | Reviewed against implementation |
+
+## Data-integrity follow-up
+
+`tests/test_data_integrity.py` covers the reproduced DBF-header record mismatch and KML attribute collisions, verifies rejection without metadata/feature persistence, and retains valid deleted-row, optional EOF and unrepacked Shapefile behavior. [Executed before/after evidence](DATA_INTEGRITY_AUDIT.md) records Pyogrio 0.13.0 / GDAL 3.12.4 behavior. Source parsing now includes `app/services/shapefile_integrity.py`; required endpoints, schemas and measurements are unchanged.
 
 ## Differentiation-pass evidence
 

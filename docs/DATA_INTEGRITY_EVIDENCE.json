@@ -1,0 +1,366 @@
+{
+  "baseline_commit": "46cd7d5225777380a787c62daf6c797ac5b9d8a6",
+  "environment": "Python 3.12.13, macOS ARM64; every requirements-dev.lock pin verified",
+  "transport": "Uvicorn subprocess on loopback, actual multipart HTTP requests, disposable SQLite database",
+  "before": {
+    "pyogrio": "0.13.0",
+    "gdal": [
+      3,
+      12,
+      4
+    ],
+    "cases": [
+      {
+        "fixture": "valid",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [],
+        "read_info_features": 2,
+        "parsed_features": 2,
+        "fids": [
+          0,
+          1
+        ],
+        "http_status": 201,
+        "persisted_features": 2,
+        "retrieved_fids": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "fixture": "dbf_declares_one",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 1,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [],
+        "read_info_features": 2,
+        "parsed_features": 1,
+        "fids": [
+          0
+        ],
+        "http_status": 201,
+        "persisted_features": 1,
+        "retrieved_fids": [
+          "0"
+        ]
+      },
+      {
+        "fixture": "dbf_declares_three",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 3,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [],
+        "read_info_features": 2,
+        "parsed_features": 2,
+        "fids": [
+          0,
+          1
+        ],
+        "http_status": 201,
+        "persisted_features": 2,
+        "retrieved_fids": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "fixture": "deleted_first",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [
+          0
+        ],
+        "read_info_features": 2,
+        "parsed_features": 1,
+        "fids": [
+          1
+        ],
+        "http_status": 201,
+        "persisted_features": 1,
+        "retrieved_fids": [
+          "1"
+        ]
+      },
+      {
+        "fixture": "deleted_last",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [
+          1
+        ],
+        "read_info_features": 2,
+        "parsed_features": 1,
+        "fids": [
+          0
+        ],
+        "http_status": 201,
+        "persisted_features": 1,
+        "retrieved_fids": [
+          "0"
+        ]
+      },
+      {
+        "fixture": "deleted_all",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [
+          0,
+          1
+        ],
+        "read_info_features": 2,
+        "parsed_features": 0,
+        "fids": [],
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "EMPTY_DATASET",
+            "message": "File does not contain any features."
+          }
+        }
+      },
+      {
+        "fixture": "duplicate_data",
+        "http_status": 201,
+        "persisted_properties": {
+          "extended_data": {
+            "site": "second"
+          }
+        }
+      },
+      {
+        "fixture": "duplicate_simple",
+        "http_status": 201,
+        "persisted_properties": {
+          "extended_data": {
+            "site": "second"
+          }
+        }
+      },
+      {
+        "fixture": "cross_schema",
+        "http_status": 201,
+        "persisted_properties": {
+          "extended_data": {
+            "site": "second"
+          }
+        }
+      },
+      {
+        "fixture": "data_simple",
+        "http_status": 201,
+        "persisted_properties": {
+          "extended_data": {
+            "site": "second"
+          }
+        }
+      }
+    ]
+  },
+  "after": {
+    "pyogrio": "0.13.0",
+    "gdal": [
+      3,
+      12,
+      4
+    ],
+    "cases": [
+      {
+        "fixture": "valid",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [],
+        "read_info_features": 2,
+        "parsed_features": 2,
+        "fids": [
+          0,
+          1
+        ],
+        "http_status": 201,
+        "persisted_features": 2,
+        "retrieved_fids": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "fixture": "dbf_declares_one",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 1,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [],
+        "read_info_features": 2,
+        "parsed_features": 1,
+        "fids": [
+          0
+        ],
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "INVALID_SHAPEFILE",
+            "message": "Shapefile geometry, index and attribute records are inconsistent."
+          }
+        }
+      },
+      {
+        "fixture": "dbf_declares_three",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 3,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [],
+        "read_info_features": 2,
+        "parsed_features": 2,
+        "fids": [
+          0,
+          1
+        ],
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "INVALID_SHAPEFILE",
+            "message": "Shapefile geometry, index and attribute records are inconsistent."
+          }
+        }
+      },
+      {
+        "fixture": "deleted_first",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [
+          0
+        ],
+        "read_info_features": 2,
+        "parsed_features": 1,
+        "fids": [
+          1
+        ],
+        "http_status": 201,
+        "persisted_features": 1,
+        "retrieved_fids": [
+          "1"
+        ]
+      },
+      {
+        "fixture": "deleted_last",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [
+          1
+        ],
+        "read_info_features": 2,
+        "parsed_features": 1,
+        "fids": [
+          0
+        ],
+        "http_status": 201,
+        "persisted_features": 1,
+        "retrieved_fids": [
+          "0"
+        ]
+      },
+      {
+        "fixture": "deleted_all",
+        "shp_bytes": 372,
+        "shp_header_bytes": 372,
+        "shp_physical_records": 2,
+        "shx_records": 2,
+        "dbf_declared_records": 2,
+        "dbf_physical_slots": 2,
+        "dbf_deleted_slots": [
+          0,
+          1
+        ],
+        "read_info_features": 2,
+        "parsed_features": 0,
+        "fids": [],
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "EMPTY_DATASET",
+            "message": "File does not contain any features."
+          }
+        }
+      },
+      {
+        "fixture": "duplicate_data",
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "INVALID_KML",
+            "message": "ExtendedData names must be unique within each feature."
+          }
+        }
+      },
+      {
+        "fixture": "duplicate_simple",
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "INVALID_KML",
+            "message": "ExtendedData names must be unique within each feature."
+          }
+        }
+      },
+      {
+        "fixture": "cross_schema",
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "INVALID_KML",
+            "message": "ExtendedData names must be unique within each feature."
+          }
+        }
+      },
+      {
+        "fixture": "data_simple",
+        "http_status": 422,
+        "error": {
+          "error": {
+            "code": "INVALID_KML",
+            "message": "ExtendedData names must be unique within each feature."
+          }
+        }
+      }
+    ]
+  }
+}

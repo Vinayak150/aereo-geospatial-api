@@ -10,6 +10,8 @@ A FastAPI backend for the Aereo software development internship assignment. Uplo
 
 **Measurement proof:** [executed evidence](docs/MEASUREMENT_EVIDENCE.md) records 16 cases with actual results, independent references, model differences and acceptance criteria. Recompute with `python scripts/measurement_evidence.py --check`.
 
+**Data integrity:** [the targeted audit](docs/DATA_INTEGRITY_AUDIT.md) reproduces and fixes silent Shapefile record loss and KML attribute overwrites with the pinned readers.
+
 **Start with:** [official brief notes](docs/OFFICIAL_ASSIGNMENT.md), [requirements matrix](docs/REQUIREMENTS.md), [technical decisions](docs/TECHNICAL_DECISIONS.md), and [delivery report](docs/DELIVERY_REPORT.md).
 
 ## Quick start
@@ -176,7 +178,11 @@ The server command's concurrency limit can reject overloaded requests with Uvico
 
 **Shapefile ZIP:** one `.shp`, matching `.shx`, `.dbf`, and `.prj`; optional `.cpg`. Case-insensitive paths and ordinary subdirectories work. Multiple datasets, missing/invalid CRS, encrypted ZIPs, unsafe paths, symlinks, duplicate normalized paths and nested archives are rejected. Stored and DEFLATE compression are accepted. Extra sidecars are validated/read for limits and CRC but not passed to GDAL; unrelated files are not extracted.
 
+Index slots and DBF row counts must agree, including rows marked deleted. Indexed geometry bounds and row availability are checked before reading; parsed FIDs must match the active DBF rows. Deleted rows are intentionally excluded from returned features/counts; all-deleted input is an empty dataset. Unrepacked geometry storage and an absent DBF EOF byte remain supported. Inconsistent companions reject the entire upload before persistence.
+
 **KML:** KML 2.2 namespace, Placemark features within Document/Folder, regular geometry and MultiGeometry. IDs, common descriptive fields, Data and SimpleData values are retained. Styles, overlays, custom metadata vocabularies and full KML round-trip fidelity are not provided. NetworkLink, Model and gx tracks are rejected. Rings must explicitly close; multiple geometries must use MultiGeometry. Duplicate singleton geometry children (including outer boundaries and coordinate blocks) are rejected before FastKML can discard them. Malformed structural geometry rejects the file; parseable invalid topology produces a skipped-feature result.
+
+ExtendedData names must be unique within a feature, including across Data/SchemaData elements. The API's flat attribute mapping cannot preserve colliding names from distinct schemas, so it rejects those uploads rather than overwriting values.
 
 **CRS:** longitude/latitude are angles, not metres. For every measurable feature, transform its geometry to WGS84 to inspect extent, then select WGS84 UTM using its bounds midpoint. Require extent ≤1° longitude and latitude and latitude between 80°S and 84°N. Transform the original geometry into that metric CRS with `always_xy=True`, disabled ballpark transformations, and offline PROJ. Both projected and geographic source files follow this policy; feet-based source coordinates are transformed correctly.
 

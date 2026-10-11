@@ -25,6 +25,7 @@ from shapely.geometry.base import BaseGeometry
 from app.config import Settings
 from app.errors import APIError
 from app.services.archive import extract_shapefile
+from app.services.shapefile_integrity import active_record_ids
 
 
 @dataclass
@@ -50,6 +51,12 @@ def json_value(value: Any) -> Any:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     return value
+
+
+def add_kml_attribute(attributes: dict[str, Any], name: str, value: Any) -> None:
+    if name in attributes:
+        raise APIError("INVALID_KML", "ExtendedData names must be unique within each feature.")
+    attributes[name] = value
 
 
 def read_kml(content: bytes, settings: Settings) -> Dataset:
@@ -135,10 +142,10 @@ def read_kml(content: bytes, settings: Settings) -> Dataset:
                     if item.extended_data:
                         for entry in item.extended_data.elements:
                             if isinstance(entry, Data):
-                                extended[str(entry.name)] = entry.value
+                                add_kml_attribute(extended, str(entry.name), entry.value)
                             elif isinstance(entry, SchemaData):
                                 for data in entry.data:
-                                    extended[str(data.name)] = data.value
+                                    add_kml_attribute(extended, str(data.name), data.value)
                     if extended:
                         properties["extended_data"] = extended
                     features.append(
@@ -180,6 +187,7 @@ def read_shapefile(content: bytes, settings: Settings) -> Dataset:
             with path.open("rb") as stream:
                 if stream.read(4) != b"\x00\x00\x27\x0a":
                     raise APIError("INVALID_SHAPEFILE", "Invalid Shapefile signature.")
+            expected_ids = active_record_ids(path, settings.max_features)
             info = pyogrio.read_info(path)
             if info["driver"] != "ESRI Shapefile":
                 raise APIError("INVALID_SHAPEFILE", "Expected an ESRI Shapefile dataset.")
@@ -202,6 +210,10 @@ def read_shapefile(content: bytes, settings: Settings) -> Dataset:
             )
             if len(identifiers) > settings.max_features:
                 raise APIError("FEATURE_LIMIT", "File contains too many features.", 413)
+            if identifiers.tolist() != expected_ids:
+                raise APIError(
+                    "INVALID_SHAPEFILE", "Reader did not return every active Shapefile record."
+                )
             features = []
             for index, identifier in enumerate(identifiers):
                 properties = {

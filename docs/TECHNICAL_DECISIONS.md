@@ -98,3 +98,9 @@ The evidence script's saved-number check has a small floating-point reproduction
 - [OGC KML](https://www.ogc.org/standards/kml/): format standard.
 
 Library signatures and installed implementations were also inspected locally; the pinned dependencies and executed tests are the evidence for this repository's actual behavior.
+
+## Record integrity after native parsing
+
+The pinned reader can return fewer rows without an exception when a DBF count is corrupted. GDAL also legitimately skips deleted DBF rows while reporting a larger metadata count. A simple metadata/parsed-count equality check would reject valid data. We instead check SHX slots against DBF rows (including deleted rows), validate indexed geometry bounds, then compare returned FIDs against the active-row IDs. SHX offsets remain authoritative for unrepacked geometry storage; no geometry decoder or repair algorithm was added. See the [executed integrity audit](DATA_INTEGRITY_AUDIT.md).
+
+KML Data/SimpleData values share the existing flat ExtendedData map. Names must be unique within a feature; colliding names, including names from distinct schemas, reject the upload. This explicit representation restriction preserves the response contract and avoids silently choosing a value.

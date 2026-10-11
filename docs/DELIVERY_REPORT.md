@@ -1,8 +1,16 @@
 # Delivery report
 
-Date: 2026-10-11. The implementation is publicly available on GitHub with verified author/committer attribution. Local release checks and hosted Linux CI pass, including Docker/Compose execution and restart persistence.
+Date: 2026-10-11. The implementation is publicly available on GitHub with verified author/committer attribution. Latest integrity-follow-up results appear first; the original release and its hosted Docker/Compose results are recorded separately below.
 
-## Final release audit
+## Targeted data-integrity follow-up
+
+The published baseline `46cd7d5225777380a787c62daf6c797ac5b9d8a6` reproduced silent feature loss with the exact pinned Pyogrio 0.13.0 / GDAL 3.12.4: two geometry/index records and a DBF count changed to one produced HTTP 201 with one persisted feature. Duplicate KML attribute names also overwrote earlier values. [The audit and before/after evidence](DATA_INTEGRITY_AUDIT.md) record the exact fixtures, observations, standards references and fix.
+
+A small record-correspondence check now rejects inconsistent Shapefile companions and verifies the returned active FIDs, while honoring deleted DBF rows and unrepacked geometry storage. KML collisions are rejected within each feature's flat ExtendedData map. Both failures occur before the existing transaction. Endpoints, schemas, measurement policy, dependencies and storage architecture remain unchanged.
+
+Local verification after this change: **129 tests passed, 95.45% statement coverage**, 16 measurement cases, five properties with 200 accepted examples, both HTTP demos, lint/formatting, mypy and both dependency audits passed. The 18 added deterministic regression cases cover the confirmed losses, atomic/safe rejections and valid deletion/EOF/edit controls. The current commit's hosted result must be read from the [Verify workflow](https://github.com/Vinayak150/aereo-geospatial-api/actions/workflows/ci.yml); the successful original-release run below is historical evidence.
+
+## Original release audit (before the integrity follow-up)
 
 The original four-page SharePoint brief was reopened and read in the browser for this release. Required formats, three endpoint paths, feature fields, projected polygon/line calculations, point behavior, and README deliverables match the implementation. No additional mandatory requirement or confidentiality notice appeared in the displayed brief. The public source contains normalized requirement notes, not the original company document; bundled datasets are synthetic.
 
