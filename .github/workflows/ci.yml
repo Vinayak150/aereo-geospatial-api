@@ -1,0 +1,73 @@
+name: Verify
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.13'
+          cache: pip
+          cache-dependency-path: requirements-dev.lock
+      - run: |
+          python -m pip install --upgrade pip==26.2.1
+          python -m pip install --only-binary=:all: -r requirements-dev.lock
+      - run: python -m pip check
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy app
+      - run: pytest --cov=app --cov-report=term-missing --cov-fail-under=85 --hypothesis-show-statistics
+      - run: python scripts/measurement_evidence.py --check
+      - run: python scripts/reviewer_demo.py
+      - run: python scripts/smoke.py
+      - run: pip-audit -r requirements-dev.lock --no-deps --disable-pip
+      - name: Compose build, HTTP demonstration, permissions and persistence
+        run: |
+          trap 'docker compose -p aereo-ci logs; docker compose -p aereo-ci down -v' EXIT
+          docker compose -p aereo-ci config --quiet
+          docker compose -p aereo-ci up --build --wait --wait-timeout 120
+          test "$(docker compose -p aereo-ci exec -T api id -u)" = 10001
+          docker inspect "$(docker compose -p aereo-ci ps -q api)" > "$RUNNER_TEMP/container.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import httpx
+          from scripts.reviewer_demo import demonstrate, require
+
+          temporary = Path(os.environ["RUNNER_TEMP"])
+          host = json.loads((temporary / "container.json").read_text())[0]["HostConfig"]
+          require(host["ReadonlyRootfs"] and host["Memory"] == 512 * 1024**2, "Container storage/memory policy mismatch")
+          require(host["NanoCpus"] == 1_000_000_000 and host["PidsLimit"] == 64, "Container CPU/process policy mismatch")
+          require("ALL" in host["CapDrop"], "Container capabilities were not dropped")
+          require(any(value.startswith("no-new-privileges") for value in host["SecurityOpt"]), "Missing no-new-privileges")
+          with httpx.Client(base_url="http://127.0.0.1:8000", timeout=10, trust_env=False) as client:
+              require(client.get("/health").status_code == 200, "Container is not healthy")
+              demonstrate(client)
+              with open("sample_data/reference_rectangle.zip", "rb") as sample:
+                  response = client.post("/api/files/", files={"file": ("reference.zip", sample)})
+              require(response.status_code == 201, "Persistence fixture upload failed")
+              metadata = response.json()
+              measurements = client.get(f"/api/files/{metadata['id']}/measurements/").json()
+              (temporary / "persistence.json").write_text(json.dumps([metadata, measurements]))
+          PY
+          docker compose -p aereo-ci restart api
+          docker compose -p aereo-ci up --wait --wait-timeout 120
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import httpx
+          from scripts.reviewer_demo import require
+
+          metadata, measurements = json.loads((Path(os.environ["RUNNER_TEMP"]) / "persistence.json").read_text())
+          with httpx.Client(base_url="http://127.0.0.1:8000", timeout=10, trust_env=False) as client:
+              require(client.get(f"/api/files/{metadata['id']}/").json() == metadata, "Metadata changed across restart")
+              require(client.get(f"/api/files/{metadata['id']}/measurements/").json() == measurements, "Measurements changed across restart")
+          print("PASS: container metadata and measurements persist across restart.")
+          PY
