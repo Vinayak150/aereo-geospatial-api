@@ -1,6 +1,6 @@
 # Delivery report
 
-Date: 2026-10-11. Final local release checks pass; publication is blocked on GitHub CLI authentication and verified-email confirmation. Docker and hosted CI remain unverified.
+Date: 2026-10-11. The implementation is publicly available on GitHub with verified author/committer attribution. Local release checks and hosted Linux CI pass, including Docker/Compose execution and restart persistence.
 
 ## Final release audit
 
@@ -8,7 +8,7 @@ The original four-page SharePoint brief was reopened and read in the browser for
 
 Source review covered projection/axis/unit handling, holes and multipart geometry, invalid coordinates, extent policies, ZIP bounds and paths, KML singleton validation, entity protection, parser errors, transactions, cleanup and concurrency. No new substantive application defect was confirmed. Application code, measurement policy and test fixtures were preserved. The previously fixed silent KML data-loss regressions pass.
 
-Release preparation corrected missing Git/Docker exclusions for alternative environments, database sidecars outside the data directory, temporary files, editor state and local secrets. The README now exposes stack, mandatory endpoints and quick execution earlier. CI now includes both HTTP entry points and Compose checks for both formats, actual measurements, UID, resource restrictions and restart persistence. CI configuration, shell syntax and embedded Python parse successfully; these static checks do not establish container execution success.
+Release preparation corrected missing Git/Docker exclusions for alternative environments, database sidecars outside the data directory, temporary files, editor state and local secrets. The README now exposes stack, mandatory endpoints and quick execution earlier. CI now includes both HTTP entry points and Compose checks for both formats, actual measurements, UID, resource restrictions and restart persistence. CI configuration, shell syntax and embedded Python parsed successfully before publication. The hosted run subsequently executed and passed the container checks; results are recorded below.
 
 ### Verification repeated for this release
 
@@ -30,19 +30,27 @@ A new Python 3.12.13 environment on macOS ARM64 installed all 68 pinned developm
 
 Both audit commands additionally used a writable cache and disabled the progress spinner. Their advisory coverage does not establish absence of application defects or native-library vulnerabilities. No thresholds or tests were weakened.
 
-A staged-files-only export was also relocated to a disposable directory. Evidence verification and both HTTP entry points passed there using the fresh environment, without untracked source files or development-machine paths. Conflicting inherited database/limit/worker/proxy settings did not affect the demo: an existing database sentinel remained unchanged and temporary directories were empty after each run. An injected demonstration failure also exited nonzero and cleaned up. This verifies a clean local source export; a clone from the published GitHub repository remains pending publication.
+A staged-files-only export was also relocated to a disposable directory. Evidence verification and both HTTP entry points passed there using the fresh environment, without untracked source files or development-machine paths. Conflicting inherited database/limit/worker/proxy settings did not affect the demo: an existing database sentinel remained unchanged and temporary directories were empty after each run. An injected demonstration failure also exited nonzero and cleaned up. A subsequent fresh clone of the published repository also passed evidence verification and the real HTTP demo.
 
-### Publication and attribution gate
+### Publication and attribution
 
-The exact existing target, [Vinayak150/aereo-geospatial-api](https://github.com/Vinayak150/aereo-geospatial-api), was verified public with default branch name `main`; `git ls-remote` returned no refs. The GitHub connector identifies the authenticated account as `Vinayak150` and reports repository push permission, but does not expose verified email status or explicit author/committer fields for its commit operation. The local CLI reports no authenticated GitHub hosts.
+The implementation was published to [Vinayak150/aereo-geospatial-api](https://github.com/Vinayak150/aereo-geospatial-api), a public repository on `main`, without force-pushing. Initial implementation commit: `7af7bc493a538f8cd93d71899765db6132e65a47` (`feat: implement geospatial file measurement API`).
 
-An independent Git repository was initialized inside the application directory with branch `main` and the exact target remote. The unrelated parent Documents repository/history remains untouched. Local author name is `Vinayak Mahindrakar`. The preferred email exists in global configuration but has not been treated as verified or set locally for a commit. No author/committer environment overrides or active local Git hooks were found. No commit was created or pushed; there is no release SHA, actual release commit author/committer, hosted run URL or GitHub contributor attribution to verify yet.
+GitHub CLI authentication was checked, the account was confirmed as `Vinayak150`, and GitHub's email API reported the authorized email as verified and primary before committing. Local author and committer were configured as Vinayak Mahindrakar. GitHub's commit API links both identities to `Vinayak150`; the complete commit message contains no co-author trailers. The Contributors API lists only `Vinayak150` at this checkpoint. No author/committer environment overrides or active local Git hooks were found. CI does not create commits. Existing third-party dependency attribution was not changed.
 
-The staged file list and diff were reviewed. Secret-pattern and personal-path scans found no matches; the only binary is the documented synthetic Shapefile ZIP, whose members and integrity were checked. Environment files, databases, caches, editor state and generated archives are excluded; `.env.example` and the required sample ZIP remain tracked. No AI co-author trailer was added, and CI does not create commits. This does not claim an already-verified GitHub Contributors view.
+The application has its own Git repository; the unrelated parent Documents repository/history remains untouched. All 46 staged files and the diff were reviewed. Secret-pattern and personal-path scans found no matches; the only binary is the documented synthetic Shapefile ZIP. Environment files, databases, caches, editor state and generated archives are excluded; `.env.example` and the required sample ZIP remain tracked.
 
-To unblock, authenticate locally with `gh auth login --hostname github.com --git-protocol https --web --scopes user:email,workflow`. Then verify the preferred email on `Vinayak150`, set the local email, inspect actual author/committer identities, commit, push without force, and verify hosted attribution and CI. Do not paste credentials into chat.
+A fresh clone of the public `main` branch was checked against the implementation SHA. The evidence verifier and actual HTTP reviewer demonstration both passed from that clone using the previously clean-installed dependency environment. The external application form has not been submitted.
 
-**Current verdict: NOT READY — ACTION REQUIRED.** Core native requirements pass, but the public target still lacks the implementation. Publication, verified attribution and the hosted workflow remain blocked by authentication; Docker is also unavailable locally. No application form has been submitted. Once those gates are resolved, update this section with the actual release SHA, attribution, workflow URL and conclusion.
+### Hosted release verification
+
+[Verify run 38125363468](https://github.com/Vinayak150/aereo-geospatial-api/actions/runs/38125363468) completed with **success** for implementation commit `7af7bc493a538f8cd93d71899765db6132e65a47`; the `verify` job and all steps succeeded. Actual logs confirm **111 passing tests**, **95.28% coverage**, **16 evidence cases**, and five properties with **40 accepted examples each**. Installation on the fresh Linux runner, dependency consistency, Ruff, formatting, mypy, both real HTTP commands and the development/runtime dependency audit all passed; the audit reported no known vulnerabilities.
+
+The Compose step built the image, started the service, exercised KML and Shapefile upload/retrieval, verified the 200 m² reference and safe invalid-input rejection, checked non-root UID 10001, read-only root filesystem, 512 MiB memory, one CPU, 64-process limit, dropped capabilities and no-new-privileges. Stored metadata and measurements remained identical after restart. The disposable container and volume were removed after the check. No failing checks were skipped or disabled.
+
+A subsequent documentation-only commit records these results; its own run is available from the [workflow history](https://github.com/Vinayak150/aereo-geospatial-api/actions/workflows/ci.yml). The implementation and workflow are unchanged by that documentation update.
+
+**Verdict: READY TO SUBMIT.** The public implementation, commit attribution, fresh-clone reviewer experience and required checks are verified. The documented local-UTM/2D measurement scope and absence of public-service authentication remain intentional limitations; this is assignment readiness, not a survey certification or a claim of public-deployment readiness. The candidate still needs to submit the repository link and required personal details through Aereo's form.
 
 ## A. Requirements compliance
 
@@ -50,7 +58,7 @@ The [requirements matrix](REQUIREMENTS.md) maps each official requirement to cod
 
 Implemented: FastAPI, KML and zipped Shapefile upload, required feature inspection fields, polygon area, line length, point handling, projected-CRS calculations, all three official endpoint paths, README setup/API/architecture/decisions/learning/future scope. Measurements have a documented geographic coverage restriction, not a global accuracy claim.
 
-The required public GitHub repository/link is still a submission action. No repository was published and no form was submitted.
+The required public repository is available at [Vinayak150/aereo-geospatial-api](https://github.com/Vinayak150/aereo-geospatial-api). The application form has not been submitted.
 
 ## B. Architecture
 
@@ -94,7 +102,7 @@ Environment: macOS ARM64, Python 3.12.13. Commands below run from the project di
 
 The test suite emitted one upstream Starlette deprecation warning about the HTTPX TestClient compatibility path. The tests pass with the pinned versions; no test warning was hidden in the reported coverage run. Shapely's deprecated transformation API was replaced during review.
 
-Coverage is evidence of exercised statements, not proof of correctness or absence of vulnerabilities. The audit covers published Python-package advisories, not exhaustive native-library or application security testing. Hosted GitHub Actions has not run. Docker build/start has not been verified locally; YAML parsing does not substitute for a build.
+Coverage is evidence of exercised statements, not proof of correctness or absence of vulnerabilities. The audit covers published Python-package advisories, not exhaustive native-library or application security testing. The original local Docker attempt was unavailable. Hosted GitHub Actions subsequently passed the image build, Compose startup, real HTTP checks and restart persistence; see the release verification section above.
 
 ### Adversarial review outcomes
 
@@ -119,7 +127,7 @@ Security tests cover traversal paths, symlinks, duplicate archives, ambiguous da
 - SQLite/local evaluation scope; no authentication, ownership, retention/delete API, migrations or distributed workers.
 - Input limits and documented concurrency controls do not isolate native parsers or impose a per-job CPU deadline. No performance benchmark is claimed.
 - Version-pinned dependencies are not hash-locked, and the container base is not digest-pinned.
-- Docker build/Compose behavior and hosted CI remain unverified in this environment.
+- Docker is unavailable on the original Mac; Linux Docker/Compose behavior and hosted CI were verified successfully.
 
 ## G. Fresh-reviewer execution
 
@@ -145,9 +153,9 @@ Use the sample cURL commands in the README. From a Docker-capable host, also run
 - [x] Official brief reviewed and traced to implementation.
 - [x] Native implementation, math, integration, adversarial tests and documentation reviewed.
 - [x] Sample files, explicit limitations and interview material included.
-- [ ] Build/run Docker on a working daemon; verify Compose behavior and volume persistence.
-- [ ] Publish the project contents to a public GitHub repository.
-- [ ] Verify the hosted CI run and setup from a fresh clone.
+- [x] Build/run Docker on the hosted runner; verify Compose behavior and volume persistence.
+- [x] Publish the project contents to the specified public GitHub repository with the authorized attribution.
+- [x] Verify the successful hosted CI run and the reviewer workflow from a fresh public clone.
 - [ ] Review and understand the code, then submit the public repository URL, resume link and candidate details through Aereo's form.
 
 ## I. Interview preparation
@@ -188,13 +196,13 @@ Executed planar references produce **200 m²**, **190 m² with a hole**, **125 m
 |---|---|
 | Engineering thought beyond framework code? | Projection bounds, preserved source CRS, independent references, cardinality validation, atomic persistence and explicit skip reasons are visible in code and tests. |
 | Major correctness claims independently verifiable? | Analytic fixtures and Geod comparisons are executable; saved numbers are checked for drift. These establish the documented cases, not every possible input or external survey truth. |
-| Easy for another engineer to run? | Pinned dependencies, included genuine format samples, and one HTTP demo command. Docker and hosted CI still need an operational environment. |
+| Easy for another engineer to run? | Pinned dependencies, included genuine format samples, and one HTTP demo command. Fresh public clone and hosted Docker/Compose checks passed. |
 | Defensible choices? | UTM meets the projected-measurement brief; SQLite and bounded synchronous ingestion fit retrieval by file ID. Property tests assert shared-CRS premises before additivity. |
 | Transparent limitations? | Coverage restrictions, projection/model differences, native-parser resource risk, incomplete KML fidelity and missing public-deployment controls are explicit. |
 | Realistic failure coverage? | Corrupt inputs, silent-parser-loss regressions, native CRS behavior, resource boundaries, unavailable transformations and atomic rollback are exercised. This is not exhaustive fuzzing. |
 | Unnecessary maintenance burden? | No runtime services or unrelated features were added. Hypothesis is development-only; the old smoke entry point delegates to the same demo rather than duplicating its logic. |
-| Consistent with the assignment? | Required formats, endpoints, fields and projected measurements remain; enhancements verify the existing scope. Publication is still outstanding. |
+| Consistent with the assignment? | Required formats, endpoints, fields and projected measurements remain; enhancements verify the existing scope. Public source publication is complete; the candidate submits the application link. |
 
-**GitHub readiness:** source and native reviewer workflow are ready for public code review. Final submission should still wait for an operational Docker check and a green hosted CI run after publication. No hiring outcome or comparative candidate score is predicted.
+**GitHub readiness:** the implementation is public, author/committer attribution is verified, and native plus hosted Docker/Compose checks passed. The repository is ready for submission within its documented scope. No hiring outcome or comparative candidate score is predicted.
 
 Five questions about the hardest decisions, with concise answers, are appended to [INTERVIEW_PREP.md](INTERVIEW_PREP.md): model differences, same-CRS additivity, parser completeness, geographic coverage, and what the HTTP demonstration proves.

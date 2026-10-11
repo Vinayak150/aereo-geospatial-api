@@ -68,7 +68,7 @@ docker compose down
 
 The named volume preserves results across container replacement. Compose binds to loopback, uses an unprivileged user, drops capabilities, sets resource limits, mounts the root filesystem read-only, and provides bounded temporary space. `down` retains the named volume; do not use `down -v` unless deleting the stored results is intended.
 
-**Verification limitation:** Docker could not be built/run on the development host because its daemon was unavailable and its Compose plugin was absent. CI includes image build and container smoke steps, but a hosted CI run still requires publication. Native Python startup and HTTP sample tests did run successfully; see the delivery report.
+**Verified on GitHub Actions:** [the release workflow](https://github.com/Vinayak150/aereo-geospatial-api/actions/runs/38125363468) built and started the Compose service, exercised both upload formats and retrieval, verified the 200 m² reference, checked runtime permissions/resource limits, and confirmed persistence across restart. Docker remains unavailable on the original development Mac; the container checks ran on the hosted Linux runner. See the delivery report.
 
 ## API contract
 
@@ -239,7 +239,7 @@ pip-audit -r requirements-dev.lock --no-deps --disable-pip
 - Integration tests: both formats, attribute preservation, pagination, restart persistence, concurrent/repeated uploads, OpenAPI, safe errors and atomic rollback.
 - Adversarial tests: archives, KML entities, corrupt native-parser inputs, limits and temporary cleanup.
 
-Actual commands, results and environmental limitations are recorded in [DELIVERY_REPORT.md](docs/DELIVERY_REPORT.md). GitHub Actions performs lint, typing, tests, vulnerability audit and Docker verification after the project is published.
+Actual commands, results and environmental limitations are recorded in [DELIVERY_REPORT.md](docs/DELIVERY_REPORT.md). GitHub Actions performs lint, typing, tests, evidence reproduction, both HTTP demos, vulnerability audit and Docker/Compose verification on each push and pull request.
 
 ## Learning, tradeoffs, and future scope
 
@@ -251,9 +251,6 @@ Known limitations include bounded geographic coverage, partial KML metadata fide
 
 ## Submission
 
-1. Review the [requirements matrix](docs/REQUIREMENTS.md) and [delivery report](docs/DELIVERY_REPORT.md).
-2. Run Docker verification on a host with a working daemon.
-3. Create a public GitHub repository containing this directory's contents, preserving `.github/` and the samples.
-4. Verify hosted CI and confirm that a fresh clone installs and runs, then submit its URL with the requested candidate details.
+The public repository is [Vinayak150/aereo-geospatial-api](https://github.com/Vinayak150/aereo-geospatial-api). Review the [requirements matrix](docs/REQUIREMENTS.md), [delivery report](docs/DELIVERY_REPORT.md), and [latest workflow results](https://github.com/Vinayak150/aereo-geospatial-api/actions/workflows/ci.yml), then submit the repository URL with the requested candidate details.
 
-No GitHub repository has been published and no application form has been submitted by this build.
+Publication and hosted verification are complete. The external Aereo application form has not been submitted.
